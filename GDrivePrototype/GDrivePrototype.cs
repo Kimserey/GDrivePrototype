@@ -14,7 +14,6 @@ namespace GDrivePrototype
 				Title = "GDrivePrototype",
 				Content = new StackLayout
 				{
-					VerticalOptions = LayoutOptions.Center,
 					Children = {
 						new Label {
 							Text = "Google Drive integration prototype"
