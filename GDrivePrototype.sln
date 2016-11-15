@@ -1,0 +1,23 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDrivePrototype", "GDrivePrototype\GDrivePrototype.csproj", "{B6BE36CC-9868-4441-A26C-4482ECE34E88}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDrivePrototype.Droid", "Droid\GDrivePrototype.Droid.csproj", "{0B0B38E7-ADBF-4669-B71C-3FFFF3CA287B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B6BE36CC-9868-4441-A26C-4482ECE34E88}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B6BE36CC-9868-4441-A26C-4482ECE34E88}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B6BE36CC-9868-4441-A26C-4482ECE34E88}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B6BE36CC-9868-4441-A26C-4482ECE34E88}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0B0B38E7-ADBF-4669-B71C-3FFFF3CA287B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0B0B38E7-ADBF-4669-B71C-3FFFF3CA287B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0B0B38E7-ADBF-4669-B71C-3FFFF3CA287B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0B0B38E7-ADBF-4669-B71C-3FFFF3CA287B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
