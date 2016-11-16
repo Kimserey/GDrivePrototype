@@ -34,7 +34,6 @@ namespace GDrivePrototype.Droid
 		{
 			base.OnCreate(savedInstanceState);
 
-
 			// Remember to:
 			// 1. Enable Google Drive on the Google API developer console.
 			// 2. Create credentials using the package name and SHA-1 signature
