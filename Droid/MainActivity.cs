@@ -50,21 +50,6 @@ namespace GDrivePrototype.Droid
 			apiClient.Connect();
 		}
 
-		protected override void OnActivityResult(int requestCode, Result resultCode, Intent data)
-		{
-			base.OnActivityResult(requestCode, resultCode, data);
-
-			switch (requestCode) {
-
-				case RESOLVE_CONNECTION_REQUEST_CODE:
-					if (resultCode == Result.Ok)
-					{
-						apiClient.Connect();
-					}
-					break;
-			}
-		}
-
 		void OnConnected()
 		{
 			var intent = new OpenFileActivityBuilder().Build(apiClient);
@@ -73,6 +58,9 @@ namespace GDrivePrototype.Droid
 
 		void OnConnectionFailed(ConnectionResult connectionResult)
 		{
+			// This step is important because there are many possibility of connection failure.
+			// User needs to authorize Gdrive, then accept permissions.
+			// StartResolutionForResult will cater for prompting to the user an adequate screen.
 			if (connectionResult.HasResolution)
 			{
 				try
@@ -81,13 +69,29 @@ namespace GDrivePrototype.Droid
 				}
 				catch (IntentSender.SendIntentException e)
 				{
+					throw e;
 					// Unable to resolve, message user appropriately
 				}
 			}
 			else {
-				GooglePlayServicesUtil.GetErrorDialog(connectionResult.ErrorCode, this, 0).Show();
+				GoogleApiAvailability.Instance.GetErrorDialog(this, connectionResult.ErrorCode, 0).Show();
 			}
-		
+		}
+
+		protected override void OnActivityResult(int requestCode, Result resultCode, Intent data)
+		{
+			base.OnActivityResult(requestCode, resultCode, data);
+
+			switch (requestCode)
+			{
+
+				case RESOLVE_CONNECTION_REQUEST_CODE:
+					if (resultCode == Result.Ok)
+					{
+						apiClient.Connect();
+					}
+					break;
+			}
 		}
 	}
 
