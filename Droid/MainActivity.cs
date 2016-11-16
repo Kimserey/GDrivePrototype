@@ -39,8 +39,8 @@ namespace GDrivePrototype.Droid
 					.Builder(this)
 					.AddApi(DriveClass.API)
 					.AddScope(DriveClass.ScopeFile)
-					.AddConnectionCallbacks(OnConnected)
-					.AddOnConnectionFailedListener(OnConnectionFailed)
+					.AddOnConnectionFailedListener(HandleGoogleDriveConnectFailure)
+					.AddConnectionCallbacks(HandleGoogleDriveConnectSuccess)
 					.Build();
 		}
 
@@ -50,13 +50,7 @@ namespace GDrivePrototype.Droid
 			apiClient.Connect();
 		}
 
-		void OnConnected()
-		{
-			var intent = new OpenFileActivityBuilder().Build(apiClient);
-			StartIntentSenderForResult(intent, 0, null, ActivityFlags.ClearTop, ActivityFlags.ClearTop, 0);
-		}
-
-		void OnConnectionFailed(ConnectionResult connectionResult)
+		void HandleGoogleDriveConnectFailure(ConnectionResult connectionResult)
 		{
 			// This step is important because there are many possibility of connection failure.
 			// User needs to authorize Gdrive, then accept permissions.
@@ -77,6 +71,13 @@ namespace GDrivePrototype.Droid
 				GoogleApiAvailability.Instance.GetErrorDialog(this, connectionResult.ErrorCode, 0).Show();
 			}
 		}
+
+		void HandleGoogleDriveConnectSuccess(Bundle bundle)
+		{
+			var intent = new OpenFileActivityBuilder().Build(apiClient);
+			StartIntentSenderForResult(intent, 0, null, ActivityFlags.ClearTop, ActivityFlags.ClearTop, 0);
+		}
+
 
 		protected override void OnActivityResult(int requestCode, Result resultCode, Intent data)
 		{
