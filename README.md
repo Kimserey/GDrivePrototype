@@ -8,7 +8,7 @@ Before starting, make sure that you have performed the following steps:
  2. Create credentials using the package name and SHA-1 signature
  
          - For debug, the SHA-1 must be taken from the debug keystore used by Xamarin to sign the app
-           `keytool -list -v -keystore ~/.local/share/Xamarin/Mono\ for\ Android/debug.keystore -alias androiddebugkey -storepass android -keypass android`
+           keytool -list -v -keystore ~/.local/share/Xamarin/Mono\ for\ Android/debug.keystore -alias androiddebugkey -storepass android -keypass android
            
          - For release, the SHA-1 must be taken from the keystore used to sign the app
 
