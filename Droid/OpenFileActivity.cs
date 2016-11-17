@@ -129,6 +129,7 @@ namespace GDrivePrototype.Droid
 				}
 			}
 
+			// Potential bug, would activity be closed before all results are returned?
 			Finish();
 		}
 	}
