@@ -84,7 +84,7 @@ namespace GDrivePrototype.Droid
 				// Interlocaked.Exchange(ref object location1, object value)
 				// Sets an object to a specified value and returns a reference to the original object.
 				// ---
-				// In this context, 
+				// In this context, sets tcs to null and returns it.
 				var task = Interlocked.Exchange(ref tcs, null);
 
 				PickFileWithOpenerActivity.FilePicked -= handler;
