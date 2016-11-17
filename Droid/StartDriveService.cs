@@ -10,7 +10,7 @@ namespace GDrivePrototype.Droid
 	{
 		public void StartDrive()
 		{
-			var intent = new Intent(Android.App.Application.Context, typeof(GoogleDriveActivity));
+			var intent = new Intent(Android.App.Application.Context, typeof(PickFolderWithOpenerActivity));
 			intent.SetFlags(ActivityFlags.NewTask);
 			Android.App.Application.Context.StartActivity(intent);
 		}

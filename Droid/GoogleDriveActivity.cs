@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.IO;
 
 using Android.App;
 using Android.Content;
@@ -11,6 +12,7 @@ using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
+using Android.Content.PM;
 
 using Android.Gms.Common;
 using Android.Gms.Common.Apis;
@@ -20,18 +22,12 @@ using Android.Gms.Drive.Query;
 
 namespace GDrivePrototype.Droid
 {
-	[Activity(Label = "PickFolderWithOpenerActivity", Theme = "@style/MyTheme")]
-	public class PickFolderWithOpenerActivity : Activity
-	{}
-
 	[Activity(Label = "GoogleDriveActivity", Theme = "@style/MyTheme")]
 	public class GoogleDriveActivity : Activity
 	{
-		internal const int REQUEST_CODE_OPENER = 5;
 		internal const int RESOLVE_CONNECTION_REQUEST_CODE = 10;
-		private GoogleApiClient apiClient;
-		internal const string SYNC_FOLDER_NAME = "dexpee_sync";
-		private string FOLDER_ID;
+		GoogleApiClient apiClient;
+		string folderId = "??";
 
 		protected override void OnResume()
 		{
@@ -104,21 +100,15 @@ namespace GDrivePrototype.Droid
 		// https://developers.google.com/drive/v3/web/mime-types
 		void HandleGoogleDriveConnectSuccess(Bundle bundle)
 		{
-			var folder = DriveClass.DriveApi.GetRootFolder(apiClient);
 			var query =
 				new QueryClass.Builder()
-		               .AddFilter(
-			              Filters.And(
-							  Filters.Eq(SearchableField.Trashed, false)))
+		               .AddFilter(Filters.Eq(SearchableField.Trashed, false))
 					   .Build();
 
-			folder.ListChildren(apiClient)
-				  .SetResultCallback(new ResultCallback<IDriveApiMetadataBufferResult>(OnFolderQueryResult));
-
-			//DriveClass
-			//	.DriveApi
-			//	.FetchDriveId(apiClient, FOLDER_ID)
-			//	.SetResultCallback(new ResultCallback<IDriveApiDriveIdResult>(OnFetchDriveResult));
+			DriveClass
+				.DriveApi
+				.FetchDriveId(apiClient, folderId)
+				.SetResultCallback(new ResultCallback<IDriveApiDriveIdResult>(OnFetchDriveResult));
 		}
 
 		void OnFolderQueryResult(IDriveApiMetadataBufferResult res)
