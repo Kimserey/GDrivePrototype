@@ -22,23 +22,38 @@ using Android.Gms.Drive.Query;
 
 namespace GDrivePrototype.Droid
 {
-	[Activity(Label = "PickFileWithOpenerActivity", Theme = "@style/MyTheme")]
-	public class PickFileWithOpenerActivity : Activity
+	// Remember to:
+	// 1. Enable Google Drive on the Google API developer console.
+	// 2. Create credentials using the package name and SHA-1 signature
+	//         - For debug, the SHA-1 must be taken from the debug keystore used by Xamarin to sign the app
+	//         - For release, the SHA-1 must be taken from the keystore used to sign the app
+	//
+	[Activity(Label = "OpenFileActivity", Theme = "@style/MyTheme")]
+	public class OpenFileActivity : Activity
 	{
 		internal const int REQUEST_CODE_OPENER = 5;
 		internal const int RESOLVE_CONNECTION_REQUEST_CODE = 10;
+		internal const string ExtraDriveId = "extra_driveid";
 		const string TAG = "Google drive activity";
 		GoogleApiClient apiClient;
-		internal static event EventHandler<FilePickedResult> FilePicked;
+		IResultCallback resultCallback;
+		string driveId;
+
+		public OpenFileActivity()
+		{
+			resultCallback = new ResultCallback<IDriveApiDriveContentsResult>(OnContentsResult);
+		}
 
 		void Log(string msg)
 		{
 			Console.WriteLine("{0} - {1}", TAG, msg);
 		}
 
-		protected override void OnCreate(Bundle bundle)
+		protected override void OnCreate(Bundle savedInstanceState)
 		{
-			base.OnCreate(bundle);
+            base.OnCreate(savedInstanceState);
+			var bundle = savedInstanceState ?? this.Intent.Extras;
+			driveId = bundle.GetString(ExtraDriveId);
 
 			if (apiClient == null)
 				apiClient =
@@ -74,19 +89,10 @@ namespace GDrivePrototype.Droid
 
 		void OnConnectSuccess(Bundle bundle)
 		{
-			IntentSender intentSender =
-				DriveClass.DriveApi
-						  .NewOpenFileActivityBuilder()
-						  .SetMimeType(new string[] { "text/csv" })
-						  .Build(apiClient);
-			try
-			{
-				StartIntentSenderForResult(intentSender, REQUEST_CODE_OPENER, null, 0, 0, 0);
-			}
-			catch (IntentSender.SendIntentException e)
-			{
-				throw e;
-			}
+			DriveId.DecodeFromString(driveId)
+				   .AsDriveFile()
+				   .Open(apiClient, DriveFile.ModeReadOnly, null)
+					.SetResultCallback(resultCallback);
 		}
 
 		protected override void OnActivityResult(int requestCode, Result resultCode, Intent data)
@@ -104,8 +110,7 @@ namespace GDrivePrototype.Droid
 					case REQUEST_CODE_OPENER:
 						var drive = (DriveId)data.GetParcelableExtra(OpenFileActivityBuilder.ExtraResponseDriveId);
 						var file = drive.AsDriveFile();
-						file.GetMetadata(apiClient)
-							.SetResultCallback(new ResultCallback<IDriveResourceMetadataResult>(OnMetadataResult));
+						file.Open(apiClient, DriveFile.ModeReadOnly, null).SetResultCallback(resultCallback);
 						break;
 
 					default:
@@ -113,21 +118,31 @@ namespace GDrivePrototype.Droid
 						break;
 				}
 			}
-			else
+			else 
 			{
 				Finish();
 			}
 		}
 
-		void OnMetadataResult(IDriveResourceMetadataResult result)
+		void OnContentsResult(IDriveApiDriveContentsResult result)
 		{
-			if (result != null && result.Status.IsSuccess && FilePicked != null)
+			if (result == null)
+				return;
+
+			if (!result.Status.IsSuccess)
+				return;
+
+			string content;
+
+			using (IDriveContents contents = result.DriveContents)
 			{
-				FilePicked(this, new FilePickedResult
+				using (var streamReader = new StreamReader(contents.InputStream))
 				{
-					FileName = result.Metadata.Title,
-					DriveId = result.Metadata.DriveId.EncodeToString()
-				});
+					content = streamReader.ReadToEnd();
+					Log(result.DriveContents.DriveId.ResourceId);
+					Log(content);
+					Log(contents.DriveId.EncodeToString());
+				}
 			}
 
 			Finish();

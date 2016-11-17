@@ -92,6 +92,9 @@
     <Reference Include="Xamarin.GooglePlayServices.Drive">
       <HintPath>..\packages\Xamarin.GooglePlayServices.Drive.29.0.0.2\lib\MonoAndroid41\Xamarin.GooglePlayServices.Drive.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\portable-net45+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GDrivePrototype\GDrivePrototype.csproj">
@@ -103,8 +106,8 @@
     <Compile Include="MainActivity.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="GoogleDriveActivity.cs" />
-    <Compile Include="StartDriveService.cs" />
+    <Compile Include="OpenFileActivity.cs" />
+    <Compile Include="GDriveService.cs" />
     <Compile Include="PickFolderWithOpenerActivity.cs" />
   </ItemGroup>
   <ItemGroup>
