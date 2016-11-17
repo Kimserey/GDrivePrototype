@@ -117,13 +117,11 @@ namespace GDrivePrototype.Droid
 
 		public void Refresh()
 		{
-			foreach (var file in GetSyncList())
-			{
-				var intent = new Intent(Android.App.Application.Context, typeof(OpenFileActivity));
-				intent.SetFlags(ActivityFlags.NewTask);
-				intent.PutExtra(OpenFileActivity.ExtraDriveId, file.DriveId);
-				Android.App.Application.Context.StartActivity(intent);
-			}
+			var files = GetSyncList();
+			var intent = new Intent(Android.App.Application.Context, typeof(OpenFileActivity));
+			intent.SetFlags(ActivityFlags.NewTask);
+			intent.PutExtra(OpenFileActivity.ExtraDriveIds, files.Select(f => f.DriveId).ToArray());
+			Android.App.Application.Context.StartActivity(intent);
 		}
 	}
 }

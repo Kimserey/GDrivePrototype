@@ -33,27 +33,15 @@ namespace GDrivePrototype.Droid
 	{
 		internal const int REQUEST_CODE_OPENER = 5;
 		internal const int RESOLVE_CONNECTION_REQUEST_CODE = 10;
-		internal const string ExtraDriveId = "extra_driveid";
-		const string TAG = "Google drive activity";
+		internal const string ExtraDriveIds = "extra_driveids";
 		GoogleApiClient apiClient;
-		IResultCallback resultCallback;
-		string driveId;
-
-		public OpenFileActivity()
-		{
-			resultCallback = new ResultCallback<IDriveApiDriveContentsResult>(OnContentsResult);
-		}
-
-		void Log(string msg)
-		{
-			Console.WriteLine("{0} - {1}", TAG, msg);
-		}
+		string[] driveIds;
 
 		protected override void OnCreate(Bundle savedInstanceState)
 		{
             base.OnCreate(savedInstanceState);
 			var bundle = savedInstanceState ?? this.Intent.Extras;
-			driveId = bundle.GetString(ExtraDriveId);
+			driveIds = bundle.GetStringArray(ExtraDriveIds);
 
 			if (apiClient == null)
 				apiClient =
@@ -89,10 +77,13 @@ namespace GDrivePrototype.Droid
 
 		void OnConnectSuccess(Bundle bundle)
 		{
-			DriveId.DecodeFromString(driveId)
-				   .AsDriveFile()
-				   .Open(apiClient, DriveFile.ModeReadOnly, null)
-					.SetResultCallback(resultCallback);
+			foreach (var driveId in driveIds)
+			{
+				DriveId.DecodeFromString(driveId)
+						.AsDriveFile()
+						.Open(apiClient, DriveFile.ModeReadOnly, null)
+						.SetResultCallback(new ResultCallback<IDriveApiDriveContentsResult>(OnContentsResult));
+			}
 		}
 
 		protected override void OnActivityResult(int requestCode, Result resultCode, Intent data)
@@ -105,12 +96,6 @@ namespace GDrivePrototype.Droid
 				{
 					case RESOLVE_CONNECTION_REQUEST_CODE:
 						apiClient.Connect();
-						break;
-
-					case REQUEST_CODE_OPENER:
-						var drive = (DriveId)data.GetParcelableExtra(OpenFileActivityBuilder.ExtraResponseDriveId);
-						var file = drive.AsDriveFile();
-						file.Open(apiClient, DriveFile.ModeReadOnly, null).SetResultCallback(resultCallback);
 						break;
 
 					default:
@@ -138,10 +123,9 @@ namespace GDrivePrototype.Droid
 			{
 				using (var streamReader = new StreamReader(contents.InputStream))
 				{
+					// sqlite
 					content = streamReader.ReadToEnd();
-					Log(result.DriveContents.DriveId.ResourceId);
-					Log(content);
-					Log(contents.DriveId.EncodeToString());
+					Console.WriteLine(content);
 				}
 			}
 
