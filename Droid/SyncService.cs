@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Threading;
 
-[assembly: Dependency(typeof(GDrivePrototype.Droid.GDriveService))]
+[assembly: Dependency(typeof(GDrivePrototype.Droid.SyncService))]
 namespace GDrivePrototype.Droid
 {
 	public class FilePickedResult : EventArgs
@@ -18,15 +18,15 @@ namespace GDrivePrototype.Droid
 		public string DriveId { get; set; }
 	}
 
-	public class GDriveService : IGDriveService
+	public class SyncService : ISyncService
 	{
 		TaskCompletionSource<FileData> tcs;
 		string fileAbsolutePath;
 		char unicodeCharSeparator = '\u1698';
 
-		public GDriveService()
+		public SyncService()
 		{
-			var sharedDir = Path.Combine(Android.OS.Environment.ExternalStorageDirectory.AbsolutePath, "GDrivePrototype");
+			var sharedDir = Path.Combine(Android.App.Application.Context.FilesDir.AbsolutePath, "GDrivePrototype");
 			Directory.CreateDirectory(sharedDir);
 			fileAbsolutePath = Path.Combine(sharedDir, "sync_files.txt");
 		}
@@ -117,11 +117,10 @@ namespace GDrivePrototype.Droid
 
 		public void Dump(string dumpPath, IEnumerable<string> driveIds)
 		{
-			var files = GetSyncList();
-			var intent = new Intent(Android.App.Application.Context, typeof(OpenFileActivity));
+			var intent = new Intent(Android.App.Application.Context, typeof(DumpDataActivity));
 			intent.SetFlags(ActivityFlags.NewTask);
-			intent.PutExtra(OpenFileActivity.ExtraDumpDbPath, dumpPath);
-			intent.PutExtra(OpenFileActivity.ExtraDriveIds, driveIds.ToArray());
+			intent.PutExtra(DumpDataActivity.ExtraDumpDbPath, dumpPath);
+			intent.PutExtra(DumpDataActivity.ExtraDriveIds, driveIds.ToArray());
 			Android.App.Application.Context.StartActivity(intent);
 		}
 	}

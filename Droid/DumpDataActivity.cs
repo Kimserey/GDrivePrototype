@@ -20,6 +20,8 @@ using Android.Gms.Drive;
 using Java.Lang;
 using Android.Gms.Drive.Query;
 
+using SQLite;
+
 namespace GDrivePrototype.Droid
 {
 	// Remember to:
@@ -28,8 +30,8 @@ namespace GDrivePrototype.Droid
 	//         - For debug, the SHA-1 must be taken from the debug keystore used by Xamarin to sign the app
 	//         - For release, the SHA-1 must be taken from the keystore used to sign the app
 	//
-	[Activity(Label = "OpenFileActivity", Theme = "@style/MyTheme")]
-	public class OpenFileActivity : Activity
+	[Activity(Label = "DumpDataActivity", Theme = "@style/MyTheme")]
+	public class DumpDataActivity : Activity
 	{
 		internal const int REQUEST_CODE_OPENER = 5;
 		internal const int RESOLVE_CONNECTION_REQUEST_CODE = 10;

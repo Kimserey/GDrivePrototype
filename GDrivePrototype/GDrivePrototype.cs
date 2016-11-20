@@ -30,7 +30,7 @@ namespace GDrivePrototype
 		string ExternalStorageDirectory { get; }
 	}
 
-	public interface IGDriveService
+	public interface ISyncService
 	{
 		HashSet<FileData> GetSyncList();
 		Task<FileData> PickFile();
@@ -146,7 +146,7 @@ namespace GDrivePrototype
 			ToolbarItems.Add(new ToolbarItem { 
 				Text = "ADD", 
 				Command = new Command(async obj => {
-					await DependencyService.Get<IGDriveService>().PickFile();
+					await DependencyService.Get<ISyncService>().PickFile();
 					RefreshList();
 				}) 
 			});
@@ -158,7 +158,7 @@ namespace GDrivePrototype
 						.Select(i => i.DriveId);
 
 				var dumpPath = Path.Combine(DependencyService.Get<IPathService>().CacheDirectory, "dump.db");
-				DependencyService.Get<IGDriveService>().Dump(dumpPath, items);
+				DependencyService.Get<ISyncService>().Dump(dumpPath, items);
 			};
 
 			RefreshList();
@@ -171,7 +171,7 @@ namespace GDrivePrototype
 		void RefreshList()
 		{
 			list.ItemsSource =
-				DependencyService.Get<IGDriveService>()
+				DependencyService.Get<ISyncService>()
 								 .GetSyncList()
 								 .OrderBy(f => f.Name)
 				                 .Select(f => 
