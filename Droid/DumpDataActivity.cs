@@ -165,7 +165,7 @@ namespace GDrivePrototype.Droid
 				connection.InsertAll(list, true);
 			}
 
-			// Only finish when al results have returned.
+			// Only finish when all results have returned.
 			lock (syncObj)
 			{
 				waitingList.Remove(driveId);
