@@ -115,12 +115,13 @@ namespace GDrivePrototype.Droid
 			return tcs.Task;
 		}
 
-		public void Refresh()
+		public void Dump(string dumpPath, IEnumerable<string> driveIds)
 		{
 			var files = GetSyncList();
 			var intent = new Intent(Android.App.Application.Context, typeof(OpenFileActivity));
 			intent.SetFlags(ActivityFlags.NewTask);
-			intent.PutExtra(OpenFileActivity.ExtraDriveIds, files.Select(f => f.DriveId).ToArray());
+			intent.PutExtra(OpenFileActivity.ExtraDumpDbPath, dumpPath);
+			intent.PutExtra(OpenFileActivity.ExtraDriveIds, driveIds.ToArray());
 			Android.App.Application.Context.StartActivity(intent);
 		}
 	}

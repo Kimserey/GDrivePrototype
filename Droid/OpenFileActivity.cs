@@ -34,14 +34,17 @@ namespace GDrivePrototype.Droid
 		internal const int REQUEST_CODE_OPENER = 5;
 		internal const int RESOLVE_CONNECTION_REQUEST_CODE = 10;
 		internal const string ExtraDriveIds = "extra_driveids";
+		internal const string ExtraDumpDbPath = "extra_dumppath";
 		GoogleApiClient apiClient;
 		string[] driveIds;
+		string dumpPath;
 
 		protected override void OnCreate(Bundle savedInstanceState)
 		{
             base.OnCreate(savedInstanceState);
 			var bundle = savedInstanceState ?? this.Intent.Extras;
 			driveIds = bundle.GetStringArray(ExtraDriveIds);
+			dumpPath = bundle.GetString(ExtraDumpDbPath);
 
 			if (apiClient == null)
 				apiClient =

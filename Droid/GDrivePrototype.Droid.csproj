@@ -109,6 +109,7 @@
     <Compile Include="OpenFileActivity.cs" />
     <Compile Include="GDriveService.cs" />
     <Compile Include="PickFolderWithOpenerActivity.cs" />
+    <Compile Include="PathService.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
