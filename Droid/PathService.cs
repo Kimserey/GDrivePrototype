@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using Xamarin.Forms;
 
 [assembly: Dependency(typeof(GDrivePrototype.Droid.PathService))]
@@ -27,6 +28,14 @@ namespace GDrivePrototype.Droid
 			get 
 			{
 				return Android.OS.Environment.ExternalStorageDirectory.AbsolutePath; 
+			}
+		}
+
+		public string DumpDatabasePath
+		{ 
+			get
+			{ 
+				return Path.Combine(Android.App.Application.Context.CacheDir.AbsolutePath, "dump.db");
 			}
 		}
 	}

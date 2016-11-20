@@ -5,6 +5,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDrivePrototype", "GDrivePr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDrivePrototype.Droid", "Droid\GDrivePrototype.Droid.csproj", "{0B0B38E7-ADBF-4669-B71C-3FFFF3CA287B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Storage", "Storage\Storage.csproj", "{C2B07847-D7F0-43A4-A883-E8EE76570C0E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -19,5 +21,9 @@ Global
 		{0B0B38E7-ADBF-4669-B71C-3FFFF3CA287B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0B0B38E7-ADBF-4669-B71C-3FFFF3CA287B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0B0B38E7-ADBF-4669-B71C-3FFFF3CA287B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C2B07847-D7F0-43A4-A883-E8EE76570C0E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C2B07847-D7F0-43A4-A883-E8EE76570C0E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C2B07847-D7F0-43A4-A883-E8EE76570C0E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C2B07847-D7F0-43A4-A883-E8EE76570C0E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

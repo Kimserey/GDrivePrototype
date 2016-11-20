@@ -21,6 +21,8 @@ using Java.Lang;
 using Android.Gms.Drive.Query;
 
 using SQLite;
+using Storage;
+using CsvHelper;
 
 namespace GDrivePrototype.Droid
 {
@@ -40,6 +42,8 @@ namespace GDrivePrototype.Droid
 		GoogleApiClient apiClient;
 		string[] driveIds;
 		string dumpPath;
+		System.Object syncObj = new System.Object();
+		List<string> waitingList = new List<string>();
 
 		protected override void OnCreate(Bundle savedInstanceState)
 		{
@@ -82,12 +86,19 @@ namespace GDrivePrototype.Droid
 
 		void OnConnectSuccess(Bundle bundle)
 		{
+			if (!driveIds.Any())
+			{
+				Finish();
+			}
+
 			foreach (var driveId in driveIds)
 			{
 				DriveId.DecodeFromString(driveId)
 						.AsDriveFile()
 						.Open(apiClient, DriveFile.ModeReadOnly, null)
 						.SetResultCallback(new ResultCallback<IDriveApiDriveContentsResult>(OnContentsResult));
+
+				waitingList.Add(driveId);
 			}
 		}
 
@@ -122,20 +133,46 @@ namespace GDrivePrototype.Droid
 			if (!result.Status.IsSuccess)
 				return;
 
-			string content;
+			var driveId = result.DriveContents.DriveId.EncodeToString();
+			var list = new List<Expense>();
 
+			// Extract CSV data from DriveContents
+			//
 			using (IDriveContents contents = result.DriveContents)
 			{
 				using (var streamReader = new StreamReader(contents.InputStream))
 				{
-					// sqlite
-					content = streamReader.ReadToEnd();
-					Console.WriteLine(content);
+					using (var csv = new CsvReader(streamReader))
+					{
+						while (csv.Read())
+						{
+							list.Add(new Expense
+							{
+								Date = csv.GetField<DateTime>(0),
+								Title = csv.GetField<string>(1),
+								Amount = csv.GetField<decimal>(2),
+								DriveId = driveId
+							});
+						}
+					}
 				}
 			}
 
-			// Potential bug, would activity be closed before all results are returned?
-			Finish();
+			// Inserts all data in dump database
+			//
+			using (var connection = Database.GetConnection(dumpPath))
+			{
+				connection.InsertAll(list, true);
+			}
+
+			// Only finish when al results have returned.
+			lock (syncObj)
+			{
+				waitingList.Remove(driveId);
+
+				if (waitingList.Count == 0)
+					Finish();
+			}
 		}
 	}
 }

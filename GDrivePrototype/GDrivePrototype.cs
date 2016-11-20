@@ -7,6 +7,8 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Xamarin.Forms;
+using SQLite;
+using Storage;
 
 namespace GDrivePrototype
 {
@@ -16,18 +18,13 @@ namespace GDrivePrototype
 		public string DriveId { get; set; }
 	}
 
-	public class Expense
-	{ 
-		public DateTime Date { get; set; }
-		public string Title { get; set; }
-		public decimal Amount { get; set; }
-	}
-
 	public interface IPathService
 	{
 		string PersonalDirectory { get; }
 		string CacheDirectory { get; }
 		string ExternalStorageDirectory { get; }
+
+		string DumpDatabasePath { get; }
 	}
 
 	public interface ISyncService
@@ -66,13 +63,41 @@ namespace GDrivePrototype
 
 	public class DataPage : ContentPage
 	{
+		ListView list;
+		string dumpDb;
+
 		public DataPage()
 		{
 			Title = "Data";
 
-			var list = new ListView(ListViewCachingStrategy.RecycleElement);
+			dumpDb = DependencyService.Get<IPathService>().DumpDatabasePath;
+			list =
+				new ListView(ListViewCachingStrategy.RecycleElement)
+				{
+					ItemTemplate = new DataTemplate(typeof(ExpenseCell))
+				};
 
 			Content = list;
+		}
+
+		protected override void OnAppearing()
+		{
+			base.OnAppearing();
+
+			List<Expense> expenses;
+			using (var db = Database.GetConnection(dumpDb))
+			{
+				expenses = 
+					db.DeferredQuery<Expense>(
+						"SELECT" +
+						" * " +
+						"FROM expenses " +
+						"ORDER BY date, title"
+					)
+		  			.ToList();
+			}
+
+			list.ItemsSource = expenses;
 		}
 	}
 
@@ -157,8 +182,13 @@ namespace GDrivePrototype
 						.Where(i => i.IsChecked)
 						.Select(i => i.DriveId);
 
-				var dumpPath = Path.Combine(DependencyService.Get<IPathService>().CacheDirectory, "dump.db");
-				DependencyService.Get<ISyncService>().Dump(dumpPath, items);
+				var dumpDb = DependencyService.Get<IPathService>().DumpDatabasePath;
+				using (var db = Storage.Database.GetConnection(dumpDb)) 
+				{
+					db.DeleteAll<Storage.Expense>();
+				}
+
+				DependencyService.Get<ISyncService>().Dump(dumpDb, items);
 			};
 
 			RefreshList();
@@ -174,13 +204,7 @@ namespace GDrivePrototype
 				DependencyService.Get<ISyncService>()
 								 .GetSyncList()
 								 .OrderBy(f => f.Name)
-				                 .Select(f => 
-			                         	new SourceViewModel 
-										{ 
-											Title = f.Name, 
-											DriveId = f.DriveId, 
-											IsChecked = false 
-										})
+				                 .Select(f => new SourceViewModel { Title = f.Name, DriveId = f.DriveId, IsChecked = false })
 								 .ToList();
 			
 			list.EndRefresh();

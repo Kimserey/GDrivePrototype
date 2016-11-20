@@ -115,6 +115,7 @@ namespace GDrivePrototype.Droid
 			}
 			else
 			{
+				FilePicked(this, null);
 				Finish();
 			}
 		}
